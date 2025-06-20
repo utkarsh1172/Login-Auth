@@ -38,6 +38,7 @@ const {
         password:password
       }
       if(nameVerify && emailVerify && passwordVerify && mobileVerify){
+        
       axios.post('http://192.168.1.104:5001/register',userData) 
       .then(res => {console.log(res.data) 
         if(res.status == "ok"){
