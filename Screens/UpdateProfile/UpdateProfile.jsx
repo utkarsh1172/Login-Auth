@@ -12,7 +12,7 @@ import Back from 'react-native-vector-icons/Ionicons';
 import {RadioButton} from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
 function UpdateProfile() {
@@ -23,21 +23,31 @@ function UpdateProfile() {
   const [profession, setProfession] = useState('');
   const [mobile, setMobile] = useState('');
   const route = useRoute();
-  const selectPhoto = () => {
-    ImagePicker.openPicker({
-      width: 400,
-      height: 400,
-      cropping: true,
-      includeBase64: true,
-      cropperCircleOverlay: true,
-      avoidEmptySpaceAroundImage: true,
-      freeStyleCropEnabled: true,
-    }).then(image => {
-      console.log(image);
-      const data = `data:${image.mime};base64,${image.data}`;
-      setImage(data);
+ const selectPhoto = () => {
+  ImagePicker.openPicker({
+    width: 400,
+    height: 400,
+    cropping: true,
+    includeBase64: true,
+    cropperCircleOverlay: true,
+    avoidEmptySpaceAroundImage: true,
+    freeStyleCropEnabled: true,
+  })
+    .then(image => {
+      if (!image.data) {
+        console.log("Base64 data is missing!");
+        return;
+      }
+
+      const imageData = `data:${image.mime};base64,${image.data}`;
+      setImage(imageData);
+      console.log("Image size in KB:", imageData.length / 1024);
+      console.log("Image successfully set", imageData);
+    })
+    .catch(error => {
+      console.log("ImagePicker error:", error);
     });
-  };
+};
 
  
   useEffect(() => {
@@ -58,9 +68,9 @@ function UpdateProfile() {
       mobile,
       gender
     };
-    console.log(formdata);
+    console.log("working",formdata);
     axios
-      .post('http://192.168.1.30:5001/update-user', formdata)
+      .post('http://192.168.1.100:5001/update-user', formdata)
       .then(res => {console.log(res.data)
         if(res.data.status=="Ok"){
           Toast.show({
@@ -71,6 +81,7 @@ function UpdateProfile() {
         }
       });
   };
+  const navigation = useNavigation()
 
   return (
     <ScrollView
@@ -80,7 +91,7 @@ function UpdateProfile() {
       <View>
         <View style={styles.header}>
           <View style={{flex: 1}}>
-            <Back name="arrow-back" size={30} style={styles.backIcon} />
+            <Back onPress={() => navigation.goBack()} name="arrow-back" size={30} style={styles.backIcon} />
           </View>
           <View style={{flex: 3}}>
             <Text style={styles.nameText}>Edit Profile</Text>

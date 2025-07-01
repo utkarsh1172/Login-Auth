@@ -1,4 +1,3 @@
-
 const {
   View,
   Text,
@@ -17,6 +16,7 @@ import Error from 'react-native-vector-icons/MaterialIcons';
 import {useState} from 'react';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import {RadioButton} from 'react-native-paper';
 
 function RegisterPage({props}) {
   const [name, setName] = useState('');
@@ -28,16 +28,24 @@ function RegisterPage({props}) {
   const [password, setPassword] = useState('');
   const [passwordVerify, setPasswordVerify] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [userType, setUserType] = useState('');
+  const [secretText, setSecretText] = useState('');
 
   const navigation = useNavigation();
+   console.log("userType",userType,secretText )
   function handelSubmit() {
     const userData = {
       name: name,
       email,
       mobile,
       password,
+      userType
     };
-    if (nameVerify && emailVerify && passwordVerify && mobileVerify) {
+    // if (nameVerify && emailVerify && passwordVerify && mobileVerify) {
+    console.log("userType",userType)
+      if (userType == 'Admin' && secretText != 'Text1243') {
+        return Alert.alert('Invalid Adminjhgf');
+      }
       axios
         .post('http://192.168.1.100:5001/register', userData)
         .then(res => {
@@ -50,15 +58,15 @@ function RegisterPage({props}) {
           }
         })
         .catch(e => console.log(e));
-    } else {
-      Alert.alert('Fill mandatory details');
+    // } else {
+      // Alert.alert('Fill mandatory details');
       // Toast.show({
-      //   type:'error',
-      //   text1:'Error!!',
-      //   text2:'Fill mandatory details',
-      //   visibilityTime:5000
-      // })
-    }
+      //   type: 'error',
+      //   text1: 'Error!!',
+      //   text2: 'Fill mandatory details',
+      //   visibilityTime: 5000,
+      // });
+    // }
   }
 
   function handleName(e) {
@@ -112,6 +120,45 @@ function RegisterPage({props}) {
         </View>
         <View style={styles.loginContainer}>
           <Text style={styles.text_header}>Register!!!</Text>
+
+          <View style={styles.radioButton_div}>
+            <Text style={styles.radioButton_title}> Login as</Text>
+            <View style={styles.radioButton_inner_div}>
+              <Text style={styles.radioButton_text}>User</Text>
+              <RadioButton
+                value="User"
+                status={userType == 'User' ? 'checked' : 'unchecked'}
+                onPress={() => setUserType('User')}
+              />
+            </View>
+            <View style={styles.radioButton_inner_div}>
+              <Text style={styles.radioButton_text}>Admin</Text>
+              <RadioButton
+                value="Admin"
+                status={userType == 'Admin' ? 'checked' : 'unchecked'}
+                onPress={() => setUserType('Admin')}
+              />
+            </View>
+          </View>
+
+          {userType == 'Admin' ? (
+            <View style={styles.action}>
+              <FontAwesome
+                name="user-o"
+                color="#420475"
+                style={styles.smallIcon}
+              />
+              <TextInput
+                placeholder="Secret Text"
+                 placeholderTextColor={'gray'}
+                style={styles.textInput}
+                onChange={e => setSecretText(e.nativeEvent.text)}
+              />
+            </View>
+          ) : (
+            ''
+          )}
+
           <View style={styles.action}>
             <FontAwesome
               name="user-o"
@@ -120,6 +167,7 @@ function RegisterPage({props}) {
             />
             <TextInput
               placeholder="Name"
+               placeholderTextColor={'gray'}
               style={styles.textInput}
               onChange={e => handleName(e)}
             />
@@ -148,6 +196,7 @@ function RegisterPage({props}) {
             <TextInput
               placeholder="Email"
               style={styles.textInput}
+               placeholderTextColor={'gray'}
               onChange={e => handleEmail(e)}
             />
             {email.length < 1 ? null : emailVerify ? (
@@ -176,6 +225,7 @@ function RegisterPage({props}) {
               placeholder="Mobile"
               style={styles.textInput}
               onChange={e => handleMobile(e)}
+               placeholderTextColor={'gray'}
               maxLength={10}
             />
             {mobile.length < 1 ? null : mobileVerify ? (
@@ -197,6 +247,7 @@ function RegisterPage({props}) {
             <FontAwesome name="lock" color="#420475" style={styles.smallIcon} />
             <TextInput
               placeholder="Password"
+              placeholderTextColor={'gray'}
               style={styles.textInput}
               onChange={e => handlePassword(e)}
               secureTextEntry={showPassword}

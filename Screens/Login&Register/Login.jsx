@@ -22,25 +22,37 @@ function LoginPage({props}) {
   const [password, setPassword] = useState('');
 
   function handleSubmit() {
-    console.log(email, password);
-    const userData = {
-      email: email,
-      password,
-    };
+  console.log(email, password);
 
-    axios.post('http://192.168.1.100:5001/login-user', userData).then(res => {
-      console.log("WEREW",res.data);
-      if (res.data.status == 'ok') {
-        Alert.alert('Logged In Successfull');
+  const userData = {
+    email: email,
+    password,
+  };
+
+  axios.post('http://192.168.1.100:5001/login-user', userData)
+    .then(res => {
+      console.log("RESPONSE:", res.data);
+      if (res.data.status === 'ok') {
+        Alert.alert('Logged In Successfully');
         AsyncStorage.setItem('token', res.data.data);
         AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-        navigation.navigate('Home');
+        AsyncStorage.setItem('userType', res.data.userType);
+        // navigation.navigate('Home');
+        if(res.data.userType == 'Admin'){
+          navigation.navigate('AdminScreen')
+        }else{
+          navigation.navigate('Home')
+        }
+      } else {
+        Alert.alert('Login Failed', res.data.message || 'Invalid credentials');
+        console.log("Login error:", res.data);
       }
-      else {
-        console.log("error",res)
-      }
+    })
+    .catch(error => {
+      Alert.alert('Network Error', error.message);
+      console.error('Axios error:', error);
     });
-  }
+}
   async function getData() {
     const data = await AsyncStorage.getItem('isLoggedIn');
     

@@ -16,6 +16,7 @@ import RegisterPage from './Screens/Login&Register/Register';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import UpdateProfile from './Screens/UpdateProfile/UpdateProfile';
+import AdminScreen from './Screens/AdminScreen';
 
 
 const toastConfig = {
@@ -145,15 +146,38 @@ const LoginNav = () => {
       <Stack.Screen name="Login" component={LoginPage} />
       <Stack.Screen name="Register" component={RegisterPage} />
       <Stack.Screen name="Home" component={DrawerNav} />
+       <Stack.Screen name="AdminScreen" component={AdminStack} />
     </Stack.Navigator>
   );
 };
+
+const AdminStack = () => {
+  const Stack = createNativeStackNavigator()
+  return(
+    <Stack.Navigator>
+      <Stack.Screen  options={{
+      statusBarColor: '#0163d2',
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#0163d2',
+        },
+        headerBackVisible:false,
+        headerTintColor: '#fff',
+        headerTitleAlign: 'center',
+    }} name ="AdminScreen" component={AdminScreen}/>
+      <Stack.Screen options={{headerShown:false}} name="Login" component={LoginNav}/>
+    </Stack.Navigator>
+  )
+}
 function App() {
 const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [userType, setUserType] = useState(false);
   async function getData() {
     const data = await AsyncStorage.getItem('isLoggedIn');
-    console.log(data, 'at app.jsx');
+     const userTypeData = await AsyncStorage.getItem('userType');
+    console.log(data,userTypeData, 'at app.jsx');
     setIsLoggedIn(data);
+    setUserType(userTypeData)
   }
 
   useEffect(() => {
@@ -165,7 +189,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? <DrawerNav /> : <LoginNav />}
+      {isLoggedIn && userType == "Admin" ? <AdminStack/> : isLoggedIn ? <DrawerNav /> : <LoginNav />}
       <Toast config={toastConfig}/>
     </NavigationContainer>
   );
