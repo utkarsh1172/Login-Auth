@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
 
     borderWidth: 1,
-    borderColor: '#420475',
+    borderColor: '#7d48ff',
     borderRadius: 50,
   },
   textInput: {
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   text_header: {
-    color: '#420475',
+    color: '#7d48ff',
     fontWeight: 'bold',
     fontSize: 30,
   },
@@ -69,14 +69,14 @@ const styles = StyleSheet.create({
   },
   inBut: {
     width: '70%',
-    backgroundColor: '#420475',
+    backgroundColor: '#7d48ff',
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 15,
     borderRadius: 50,
   },
   inBut2: {
-    backgroundColor: '#420475',
+    backgroundColor: '#7d48ff',
     height: 65,
     width: 65,
     borderRadius: 15,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   radioButton_title: {
     fontSize: 20,
-    color: '#420475',
+    color: '#7d48ff',
   },
   radioButton_text: {
     fontSize: 16,

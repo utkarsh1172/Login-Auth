@@ -11,15 +11,17 @@ import {useNavigation} from '@react-navigation/native';
 import styles from './style';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {log} from 'react-native-reanimated';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext, GlobalContext } from '../../context';
 
 function LoginPage({props}) {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setIsLoggedin, setCurrentUser } = useContext(AuthContext);
 
   function handleSubmit() {
   console.log(email, password);
@@ -34,15 +36,11 @@ function LoginPage({props}) {
       console.log("RESPONSE:", res.data);
       if (res.data.status === 'ok') {
         Alert.alert('Logged In Successfully');
-        AsyncStorage.setItem('token', res.data.data);
-        AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-        AsyncStorage.setItem('userType', res.data.userType);
-        // navigation.navigate('Home');
-        if(res.data.userType == 'Admin'){
-          navigation.navigate('AdminScreen')
-        }else{
-          navigation.navigate('Home')
-        }
+       AsyncStorage.setItem('token', res.data.token);
+AsyncStorage.setItem('user', JSON.stringify(res.data.user));
+setIsLoggedin(true);
+setCurrentUser(res.data.user);
+        navigation.navigate('Chatscreen')
       } else {
         Alert.alert('Login Failed', res.data.message || 'Invalid credentials');
         console.log("Login error:", res.data);
@@ -80,19 +78,21 @@ function LoginPage({props}) {
           <View style={styles.action}>
             <FontAwesome
               name="user-o"
-              color="#420475"
+              color="#7d48ff"
               style={styles.smallIcon}
             />
             <TextInput
-              placeholder="Mobile or Email"
+              placeholder="Enter Email"
+               placeholderTextColor="#999" 
               style={styles.textInput}
               onChange={e => setEmail(e.nativeEvent.text)}
             />
           </View>
           <View style={styles.action}>
-            <FontAwesome name="lock" color="#420475" style={styles.smallIcon} />
+            <FontAwesome name="lock" color="#7d48ff" style={styles.smallIcon} />
             <TextInput
               placeholder="Password"
+               placeholderTextColor="#999" 
               style={styles.textInput}
               onChange={e => setPassword(e.nativeEvent.text)}
             />
@@ -104,7 +104,7 @@ function LoginPage({props}) {
               marginTop: 8,
               marginRight: 10,
             }}>
-            <Text style={{color: '#420475', fontWeight: '700'}}>
+            <Text style={{color: '#7d48ff', fontWeight: '700'}}>
               Forgot Password
             </Text>
           </View>
